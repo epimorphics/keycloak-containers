@@ -1,9 +1,9 @@
-FROM registry.access.redhat.com/ubi8-minimal AS build-env
+FROM amazoncorretto:11.0.12 AS build-env
 
 ENV KEYCLOAK_VERSION 15.0.2
 ARG KEYCLOAK_DIST=https://github.com/keycloak/keycloak/releases/download/$KEYCLOAK_VERSION/keycloak.x-preview-$KEYCLOAK_VERSION.tar.gz
 
-RUN microdnf install -y tar gzip && \
+RUN yum install -y tar gzip && \
     mkdir /opt/jboss && \ 
     cd /opt/jboss && \
     curl -L $KEYCLOAK_DIST | tar zx && \
@@ -11,13 +11,13 @@ RUN microdnf install -y tar gzip && \
     
 ADD tools /opt/jboss/tools
 
-FROM registry.access.redhat.com/ubi8-minimal
+FROM amazoncorretto:11.0.12
 
 COPY --from=build-env /opt/jboss /opt/jboss
 COPY probes /probes
 
-RUN microdnf update -y && \
-    microdnf install -y java-11-openjdk-headless && microdnf clean all && rm -rf /var/cache/yum/* && \
+RUN yum update -y && \
+    yum clean all && rm -rf /var/cache/yum/* && \
     echo "jboss:x:0:root" >> /etc/group && \
     echo "jboss:x:1000:0:JBoss user:/opt/jboss:/sbin/nologin" >> /etc/passwd && \
     chown -R jboss:root /opt/jboss && \
