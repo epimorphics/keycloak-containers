@@ -1,2 +1,4 @@
-server/tools/* eol=lf
-server-x/tools/* eol=lf
+server/tools/* text eol=lf
+server/hooks/* text eol=lf
+server-x/tools/* text eol=lf
+server-x/probes/* text eol=lf
